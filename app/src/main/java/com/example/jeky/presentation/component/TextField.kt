@@ -120,7 +120,7 @@ fun BaseTextFiled(
 ) {
     Column(modifier = modifier) {
         Text(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 6.dp),
             text = label,
             style = MaterialTheme.typography.labelMedium,
             color = Black

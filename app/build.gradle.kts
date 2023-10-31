@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.splash.api)
     implementation(libs.icons.extended)
+    implementation(libs.navigation.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
