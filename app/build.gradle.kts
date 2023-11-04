@@ -2,6 +2,7 @@
 plugins {
     alias(libs.plugins.com.android.application)
     alias(libs.plugins.org.jetbrains.kotlin.android)
+    alias(libs.plugins.secrets.gradle.plugin)
 }
 
 android {
@@ -63,6 +64,10 @@ dependencies {
     implementation(libs.splash.api)
     implementation(libs.icons.extended)
     implementation(libs.navigation.compose)
+    implementation(libs.bundles.maps)
+    implementation(libs.accompanist.permission)
+    implementation(libs.navigation.material)
+    implementation(libs.constraint.layout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)

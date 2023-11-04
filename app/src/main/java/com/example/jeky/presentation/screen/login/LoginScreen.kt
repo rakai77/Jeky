@@ -43,8 +43,8 @@ import com.example.jeky.presentation.theme.Primary
 
 @Composable
 fun LoginScreen(
-    navHostController: NavHostController,
-//    onNavigateToRegister: () -> Unit
+    onNavigateToRegister: () -> Unit,
+    onNavigateToHome: () -> Unit
 ) {
 
     var email by remember {
@@ -118,7 +118,9 @@ fun LoginScreen(
                 containerColor = Primary
             ),
             contentPadding = PaddingValues(vertical = 16.dp),
-            onClick = { /*TODO*/ }
+            onClick = {
+                onNavigateToHome.invoke()
+            }
         ) {
             Text(
                 text = stringResource(id = R.string.login),
@@ -140,12 +142,10 @@ fun LoginScreen(
                 registerString.getStringAnnotations(offset, offset)
                     .firstOrNull()?.let { span ->
                         if (span.item == registerText) {
-//                            onNavigateToRegister.invoke()
-                            navHostController.navigate(Route.Register.route)
+                            onNavigateToRegister.invoke()
                         }
                     }
             }
         )
     }
 }
-
