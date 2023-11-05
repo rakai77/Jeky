@@ -3,7 +3,11 @@ package com.example.jeky.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -16,10 +20,10 @@ import com.example.jeky.presentation.screen.login.LoginScreen
 import com.example.jeky.presentation.screen.picklocation.PickLocationBottomSheet
 import com.example.jeky.presentation.screen.register.RegisterScreen
 import com.example.jeky.presentation.theme.JekyTheme
+import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
-import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,10 +39,15 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterialNavigationApi::class)
+@OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun JekyApp() {
-    val bottomSheerNavigator = rememberBottomSheetNavigator()
+    val sheetState = rememberModalBottomSheetState(
+        ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = true
+    )
+
+    val bottomSheerNavigator = remember {BottomSheetNavigator(sheetState)}
     val navController = rememberNavController(bottomSheerNavigator)
 
     ModalBottomSheetLayout(
@@ -88,7 +97,12 @@ fun JekyApp() {
                 )
             ) { backstackEntry ->
                 val isToGetPickupLocation = backstackEntry.arguments?.getBoolean("isToGetPickupLocation") ?: true
-                PickLocationBottomSheet(isToGetPickupLocation = isToGetPickupLocation)
+                PickLocationBottomSheet(
+                    isToGetPickupLocation = isToGetPickupLocation,
+                    onClose = {
+                        navController.popBackStack()
+                    }
+                )
             }
         }
     }

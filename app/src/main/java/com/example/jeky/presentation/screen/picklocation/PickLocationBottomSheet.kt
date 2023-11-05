@@ -29,7 +29,10 @@ import com.example.jeky.presentation.theme.Border
 import com.example.jeky.presentation.theme.LightGray
 
 @Composable
-fun PickLocationBottomSheet(isToGetPickupLocation: Boolean) {
+fun PickLocationBottomSheet(
+    isToGetPickupLocation: Boolean,
+    onClose: () -> Unit
+) {
 
     var pickup by remember {
         mutableStateOf("")
@@ -55,10 +58,10 @@ fun PickLocationBottomSheet(isToGetPickupLocation: Boolean) {
         ) {
             IconButton(
                 modifier = Modifier.size(24.dp),
-                onClick = { /*TODO*/ }
+                onClick = onClose
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_close), 
+                    painter = painterResource(id = R.drawable.ic_close),
                     contentDescription = "Close Bottom Sheet"
                 )
             }
@@ -70,10 +73,11 @@ fun PickLocationBottomSheet(isToGetPickupLocation: Boolean) {
                 )
             )
         }
-        PointField(modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 18.dp)
-            .padding(horizontal = 24.dp),
+        PointField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 18.dp)
+                .padding(horizontal = 24.dp),
             pickupValue = pickup,
             destinationValue = destination,
             pickupPlaceholder = stringResource(id = R.string.pickup_location_txt),
