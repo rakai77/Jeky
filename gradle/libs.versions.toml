@@ -22,6 +22,11 @@ appcompat = "1.6.1"
 material = "1.9.0"
 constraint-layout = "1.0.1"
 
+#Room
+room_version = "2.5.1"
+ksp = "1.8.10-1.0.9"
+
+
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -51,6 +56,12 @@ maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = 
 maps-ktx = { module = "com.google.maps.android:maps-ktx", version.ref = "maps-ktx" }
 maps-utils-ktx = { module = "com.google.maps.android:maps-utils-ktx", version.ref = "maps-ktx" }
 
+# Room database
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room_version" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room_version" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room_version" }
+
+
 # Permission request
 accompanist-permission = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
@@ -63,6 +74,9 @@ org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.re
 #Maps
 secrets-gradle-plugin = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets-gradle-plugin" }
 com-android-library = { id = "com.android.library", version.ref = "agp" }
+
+# KSP
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
 
 [bundles]
 maps = ["play-services-maps", "play-service-location", "maps-compose", "maps-ktx", "maps-utils-ktx"]
