@@ -22,6 +22,15 @@ appcompat = "1.6.1"
 material = "1.9.0"
 constraint-layout = "1.0.1"
 
+#Firebase
+firebase-bom = "32.5.0"
+firebase-analytics = "21.5.0"
+firebase-crashlytics = "18.5.1"
+firebase-crashlytics-gradle = "2.9.9"
+
+#Google Service
+gms-googleServices = "4.4.0"
+
 #Room
 room_version = "2.5.1"
 ksp = "1.8.10-1.0.9"
@@ -50,6 +59,7 @@ navigation-material = { module = "com.google.accompanist:accompanist-navigation-
 constraint-layout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraint-layout" }
 
 # Maps
+gms-googleServices = { module = "com.google.gms:google-services", version.ref = "gms-googleServices" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "play-services-maps" }
 play-service-location = { module = "com.google.android.gms:play-services-location", version.ref = "play-service-location" }
 maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "maps-compose"}
@@ -67,6 +77,11 @@ accompanist-permission = { module = "com.google.accompanist:accompanist-permissi
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 com-google-android-material-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
+#Firebase
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom"}
+firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx", version.ref = "firebase-analytics" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx", version.ref = "firebase-crashlytics" }
+
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "org-jetbrains-kotlin-android" }
@@ -77,6 +92,10 @@ com-android-library = { id = "com.android.library", version.ref = "agp" }
 
 # KSP
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
+
+# Firebase
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-gradle"}
+gms-googleServices = { id = "com.google.gms.google-services", version.ref = "gms-googleServices"}
 
 [bundles]
 maps = ["play-services-maps", "play-service-location", "maps-compose", "maps-ktx", "maps-utils-ktx"]
