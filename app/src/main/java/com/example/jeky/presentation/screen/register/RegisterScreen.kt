@@ -44,7 +44,7 @@ import com.example.jeky.presentation.theme.Primary
 @Composable
 fun RegisterScreen(
     onNavigateBack: () -> Unit,
-    onNavigateToHome: () -> Unit
+//    onNavigateToHome: () -> Unit
 ) {
     var name by remember {
         mutableStateOf("")
