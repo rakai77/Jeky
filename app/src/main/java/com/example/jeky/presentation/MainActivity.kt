@@ -17,8 +17,10 @@ import androidx.navigation.navArgument
 import com.example.jeky.presentation.navigation.Route
 import com.example.jeky.presentation.screen.home.HomeScreen
 import com.example.jeky.presentation.screen.login.LoginScreen
+import com.example.jeky.presentation.screen.login.LoginViewModel
 import com.example.jeky.presentation.screen.picklocation.PickLocationBottomSheet
 import com.example.jeky.presentation.screen.register.RegisterScreen
+import com.example.jeky.presentation.screen.register.RegisterViewModel
 import com.example.jeky.presentation.theme.JekyTheme
 import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
@@ -57,7 +59,9 @@ fun JekyApp() {
             composable(
                 route = Route.Login.route
             ) {
+                val viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel(factory = LoginViewModel.Factory)
                 LoginScreen(
+                    viewModel = viewModel,
                     onNavigateToRegister = {
                         navController.navigate(Route.Register.route)
                     },
@@ -70,7 +74,9 @@ fun JekyApp() {
             composable(
                 route = Route.Register.route
             ) {
+                val viewModel: RegisterViewModel = androidx.lifecycle.viewmodel.compose.viewModel(factory = RegisterViewModel.Factory)
                 RegisterScreen(
+                    viewModel = viewModel,
                     onNavigateBack = {
                         navController.popBackStack()
                     },

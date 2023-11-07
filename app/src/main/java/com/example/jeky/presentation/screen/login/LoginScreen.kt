@@ -1,5 +1,6 @@
 package com.example.jeky.presentation.screen.login
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -17,12 +18,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -43,6 +48,7 @@ import com.example.jeky.presentation.theme.Primary
 
 @Composable
 fun LoginScreen(
+    viewModel: LoginViewModel,
     onNavigateToRegister: () -> Unit,
     onNavigateToHome: () -> Unit
 ) {
@@ -53,7 +59,9 @@ fun LoginScreen(
     var password by remember {
         mutableStateOf("")
     }
-    
+
+    val uiState by viewModel.loginUiState.collectAsState(initial = LoginUiState.Idle)
+    val context = LocalContext.current
     val registerText = stringResource(id = R.string.register)
     val notHaveAccount = stringResource(id = R.string.not_have_account) + stringResource(id = R.string.space)
     val registerString = buildAnnotatedString {
@@ -64,6 +72,27 @@ fun LoginScreen(
         withStyle(style = SpanStyle(color = Primary, fontWeight = FontWeight.SemiBold)) {
             pushStringAnnotation(tag = registerText, annotation = registerText)
             append(registerText)
+        }
+    }
+
+    val isButtonEnable by remember {
+        derivedStateOf {
+            email.trim().isNotEmpty() && password.trim().isNotEmpty()
+        }
+    }
+
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is LoginUiState.Loading -> {
+
+            }
+            is LoginUiState.Success -> {
+                onNavigateToHome.invoke()
+            }
+            is LoginUiState.Error -> {
+                Toast.makeText(context, "Error: ${(uiState as LoginUiState.Error).message}", Toast.LENGTH_SHORT).show()
+            }
+            else -> Unit
         }
     }
 
@@ -118,8 +147,9 @@ fun LoginScreen(
                 containerColor = Primary
             ),
             contentPadding = PaddingValues(vertical = 16.dp),
+            enabled = isButtonEnable,
             onClick = {
-                onNavigateToHome.invoke()
+                viewModel.login(email, password)
             }
         ) {
             Text(
