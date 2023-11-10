@@ -25,9 +25,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -40,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.jeky.R
 import com.example.jeky.core.domain.model.User
+import com.example.jeky.domain.model.EmptyStateModel
 import com.example.jeky.presentation.component.PasswordTextField
 import com.example.jeky.presentation.component.PlainTextField
 import com.example.jeky.presentation.component.TextHeader
@@ -47,11 +50,13 @@ import com.example.jeky.presentation.component.TrailingTextField
 import com.example.jeky.presentation.theme.Black
 import com.example.jeky.presentation.theme.Primary
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun RegisterScreen(
     viewModel: RegisterViewModel,
     onNavigateBack: () -> Unit,
-    onNavigateToHome: () -> Unit
+    onNavigateToHome: () -> Unit,
+    onRegisterError: (EmptyStateModel) -> Unit
 ) {
     var name by remember {
         mutableStateOf("")
@@ -70,7 +75,7 @@ fun RegisterScreen(
     }
 
     val uiState by viewModel.registerUiState.collectAsState(initial = RegisterUiState.Idle)
-    val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     val loginText = stringResource(id = R.string.login)
     val haveAccount =
         stringResource(id = R.string.have_account) + stringResource(id = R.string.space)
@@ -107,11 +112,14 @@ fun RegisterScreen(
             }
 
             is RegisterUiState.Error -> {
-                Toast.makeText(
-                    context,
-                    "Error: ${(uiState as RegisterUiState.Error).message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                onRegisterError.invoke(
+                    EmptyStateModel(
+                        R.raw.jeky_error,
+                        "Ups, something error",
+                        (uiState as RegisterUiState.Error).message,
+                        "Okay"
+                    )
+                )
             }
 
             else -> Unit
@@ -215,6 +223,7 @@ fun RegisterScreen(
                         email, password, name, phone
                     )
                 )
+                keyboardController?.hide()
             }
         ) {
             Text(

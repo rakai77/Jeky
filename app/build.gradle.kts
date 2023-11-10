@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.secrets.gradle.plugin)
     alias(libs.plugins.gms.googleServices)
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -72,6 +74,9 @@ dependencies {
     implementation(libs.accompanist.permission)
     implementation(libs.navigation.material)
     implementation(libs.constraint.layout)
+    implementation(libs.lottie)
+    implementation(libs.kotlin.serialization)
+    implementation(libs.gson)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.analytics)

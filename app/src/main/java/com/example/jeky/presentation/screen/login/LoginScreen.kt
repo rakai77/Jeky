@@ -1,6 +1,5 @@
 package com.example.jeky.presentation.screen.login
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -25,9 +24,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -37,20 +37,21 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.example.jeky.R
+import com.example.jeky.domain.model.EmptyStateModel
 import com.example.jeky.presentation.component.PasswordTextField
 import com.example.jeky.presentation.component.TextHeader
 import com.example.jeky.presentation.component.TrailingTextField
-import com.example.jeky.presentation.navigation.Route
 import com.example.jeky.presentation.theme.Black
 import com.example.jeky.presentation.theme.Primary
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel,
     onNavigateToRegister: () -> Unit,
-    onNavigateToHome: () -> Unit
+    onNavigateToHome: () -> Unit,
+    onLoginError: (EmptyStateModel) -> Unit
 ) {
 
     var email by remember {
@@ -61,7 +62,7 @@ fun LoginScreen(
     }
 
     val uiState by viewModel.loginUiState.collectAsState(initial = LoginUiState.Idle)
-    val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     val registerText = stringResource(id = R.string.register)
     val notHaveAccount = stringResource(id = R.string.not_have_account) + stringResource(id = R.string.space)
     val registerString = buildAnnotatedString {
@@ -90,7 +91,14 @@ fun LoginScreen(
                 onNavigateToHome.invoke()
             }
             is LoginUiState.Error -> {
-                Toast.makeText(context, "Error: ${(uiState as LoginUiState.Error).message}", Toast.LENGTH_SHORT).show()
+                onLoginError.invoke(
+                    EmptyStateModel(
+                        R.raw.jeky_error,
+                        "Ups, something error",
+                        (uiState as LoginUiState.Error).message,
+                        "Okay"
+                    )
+                )
             }
             else -> Unit
         }
@@ -150,6 +158,7 @@ fun LoginScreen(
             enabled = isButtonEnable,
             onClick = {
                 viewModel.login(email, password)
+                keyboardController?.hide()
             }
         ) {
             Text(

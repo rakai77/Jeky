@@ -1,5 +1,6 @@
 package com.example.jeky.presentation
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,7 +15,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.jeky.domain.model.EmptyStateModel
 import com.example.jeky.presentation.navigation.Route
+import com.example.jeky.presentation.screen.error.ErrorScreen
 import com.example.jeky.presentation.screen.home.HomeScreen
 import com.example.jeky.presentation.screen.login.LoginScreen
 import com.example.jeky.presentation.screen.login.LoginViewModel
@@ -26,6 +29,7 @@ import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
+import com.google.gson.Gson
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,6 +71,10 @@ fun JekyApp() {
                     },
                     onNavigateToHome = {
                         navController.navigate(Route.Home.route)
+                    },
+                    onLoginError = {
+                        val json = Uri.encode(Gson().toJson(it))
+                        navController.navigate("${Route.Error.route}/$json")
                     }
                 )
             }
@@ -82,6 +90,10 @@ fun JekyApp() {
                     },
                     onNavigateToHome = {
                         navController.navigate(Route.Home.route)
+                    },
+                    onRegisterError = {
+                        val json = Uri.encode(Gson().toJson(it))
+                        navController.navigate("${Route.Error.route}/$json")
                     }
                 )
             }
@@ -109,6 +121,20 @@ fun JekyApp() {
                         navController.popBackStack()
                     }
                 )
+            }
+
+            bottomSheet(
+                route = "${Route.Error.route}/{empty-params}",
+                arguments = listOf(
+                    navArgument("empty-params") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val emptyParams = backStackEntry.arguments?.getString("empty-params")
+                ErrorScreen(
+                    Gson().fromJson(emptyParams, EmptyStateModel::class.java)
+                ) {
+                    navController.popBackStack()
+                }
             }
         }
     }
