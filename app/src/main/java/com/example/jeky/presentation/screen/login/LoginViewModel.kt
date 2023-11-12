@@ -8,12 +8,15 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.jeky.JekyApplication
 import com.example.jeky.core.data.source.Resource
 import com.example.jeky.core.domain.repository.AuthRepository
+import com.example.jeky.core.domain.usecase.AuthUseCase
+import com.example.jeky.core.domain.usecase.UserUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class LoginViewModel constructor(
-    private val authRepository: AuthRepository
+    private val authUseCase: AuthUseCase,
+    private val userUseCase: UserUseCase
 ) : ViewModel() {
 
 
@@ -25,7 +28,10 @@ class LoginViewModel constructor(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as JekyApplication)
-                LoginViewModel(application.jekyContainer.authRepository)
+                LoginViewModel(
+                    application.jekyContainer.authUseCase,
+                    application.jekyContainer.userUseCase
+                )
             }
         }
     }
@@ -33,7 +39,7 @@ class LoginViewModel constructor(
     fun login(email: String, password: String) {
         viewModelScope.launch {
             _loginUiState.emit(LoginUiState.Loading)
-            authRepository.login(email, password)
+            authUseCase.login(email, password)
                 .collect {
                     when (it) {
                         is Resource.Success -> {
@@ -45,6 +51,12 @@ class LoginViewModel constructor(
                         else -> Unit
                     }
                 }
+        }
+    }
+
+    fun storeEmail(email: String) {
+        viewModelScope.launch {
+            userUseCase.storeEmail(email)
         }
     }
 }

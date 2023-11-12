@@ -88,6 +88,7 @@ fun LoginScreen(
 
             }
             is LoginUiState.Success -> {
+                viewModel.storeEmail((uiState as LoginUiState.Success).data.email)
                 onNavigateToHome.invoke()
             }
             is LoginUiState.Error -> {
