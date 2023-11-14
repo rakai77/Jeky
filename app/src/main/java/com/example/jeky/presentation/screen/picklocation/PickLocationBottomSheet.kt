@@ -1,6 +1,7 @@
 package com.example.jeky.presentation.screen.picklocation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -29,38 +30,46 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.jeky.R
-import com.example.jeky.core.domain.model.DisplayName
-import com.example.jeky.core.domain.model.Location
 import com.example.jeky.core.domain.model.PlacesItem
 import com.example.jeky.presentation.component.PointField
 import com.example.jeky.presentation.theme.Border
 import com.example.jeky.presentation.theme.LightGray
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+
+const val PLACE_BUNDLE = "place"
 
 @Composable
 fun PickLocationBottomSheet(
     viewModel: PickLocationViewModel,
     isToGetPickupLocation: Boolean,
+    onPlaceClick: (PlacesItem, Boolean) -> Unit,
     onClose: () -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
+
+    val focusRequester by remember {
+        mutableStateOf(FocusRequester())
+    }
 
     var pickup by remember {
         mutableStateOf("")
     }
     var destination by remember {
         mutableStateOf("")
+    }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
     }
 
     LaunchedEffect(pickup) {
@@ -121,6 +130,11 @@ fun PickLocationBottomSheet(
                 )
             )
         }
+
+        var (pickupFocusRequester, destinationFocusRequester) = if (isToGetPickupLocation) {
+            Pair(focusRequester, null)
+        } else Pair(null, focusRequester)
+
         PointField(
             modifier = Modifier
                 .fillMaxWidth()
@@ -132,6 +146,8 @@ fun PickLocationBottomSheet(
             destinationPlaceholder = stringResource(R.string.destination_location_txt),
             onPickupFocused = {},
             onDestinationFocused = {},
+            pickupFocusRequester = pickupFocusRequester,
+            destinationFocusRequester = destinationFocusRequester,
             elevation = 0.dp,
             backgroundColor = LightGray,
             borderColor = Border,
@@ -168,7 +184,7 @@ fun PickLocationBottomSheet(
                                 .fillMaxWidth()
                                 .padding(horizontal = 24.dp),
                             onClick = {
-
+                                onPlaceClick.invoke(it, isToGetPickupLocation)
                             }
                         )
                     }
@@ -187,7 +203,7 @@ fun PlaceItem(
     onClick: (PlacesItem) -> Unit
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.clickable { onClick.invoke(place) },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

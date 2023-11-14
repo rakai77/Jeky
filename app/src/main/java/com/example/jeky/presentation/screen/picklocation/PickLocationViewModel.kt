@@ -9,6 +9,7 @@ import com.example.jeky.JekyApplication
 import com.example.jeky.core.data.source.Resource
 import com.example.jeky.core.data.source.remote.dto.response.toDomain
 import com.example.jeky.core.domain.usecase.PlacesUseCase
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,6 +19,8 @@ class PickLocationViewModel constructor(private val placesUseCase: PlacesUseCase
 
     private val _uiState = MutableStateFlow<PickLocationUiState>(PickLocationUiState.Idle)
     val uiState: StateFlow<PickLocationUiState> get() = _uiState.asStateFlow()
+
+    private var getPlacesJob: Job? = null
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
@@ -29,13 +32,16 @@ class PickLocationViewModel constructor(private val placesUseCase: PlacesUseCase
     }
 
     fun getPlaces(keyword: String) {
-        viewModelScope.launch {
+        getPlacesJob?.cancel()
+        getPlacesJob = viewModelScope.launch {
             _uiState.emit(PickLocationUiState.Loading)
             placesUseCase.getPlaces(keyword)
                 .collect { result ->
                     when(result) {
                         is Resource.Success -> {
-                            _uiState.emit(PickLocationUiState.Success(result.data.toDomain()))
+                            result.data?.let {
+                                _uiState.emit(PickLocationUiState.Success(it.toDomain()))
+                            }
                         }
                         is Resource.Error -> {
                             _uiState.emit(PickLocationUiState.Error(result.message))

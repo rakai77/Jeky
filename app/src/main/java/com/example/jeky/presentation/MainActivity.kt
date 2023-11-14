@@ -19,11 +19,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.jeky.domain.model.EmptyStateModel
+import com.example.jeky.domain.model.PlacesModel
 import com.example.jeky.presentation.navigation.Route
 import com.example.jeky.presentation.screen.error.ErrorScreen
 import com.example.jeky.presentation.screen.home.HomeScreen
+import com.example.jeky.presentation.screen.home.HomeViewModel
 import com.example.jeky.presentation.screen.login.LoginScreen
 import com.example.jeky.presentation.screen.login.LoginViewModel
+import com.example.jeky.presentation.screen.picklocation.PLACE_BUNDLE
 import com.example.jeky.presentation.screen.picklocation.PickLocationBottomSheet
 import com.example.jeky.presentation.screen.picklocation.PickLocationViewModel
 import com.example.jeky.presentation.screen.register.RegisterScreen
@@ -111,9 +114,16 @@ fun JekyApp(viewModel: MainViewModel) {
                composable(
                    route = Route.Home.route
                ) {
+                   val viewModel: HomeViewModel = androidx.lifecycle.viewmodel.compose.viewModel(factory = HomeViewModel.Factory)
+                   val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
                    HomeScreen(
-                       onEditButtonClick = {
+                       viewModel = viewModel,
+                       saveStateHandle = savedStateHandle,
+                       onPickupClick = {
                            navController.navigate("${Route.PickLocationBottomSheet.route}/true")
+                       },
+                       onDestinationClick = {
+                           navController.navigate("${Route.PickLocationBottomSheet.route}/false")
                        }
                    )
                }
@@ -129,8 +139,19 @@ fun JekyApp(viewModel: MainViewModel) {
                        factory = PickLocationViewModel.Factory
                    )
                    PickLocationBottomSheet(
-                       viewModel = viewModel,
+                       viewModel,
                        isToGetPickupLocation,
+                       onPlaceClick = { place, isPickupPlace ->
+                           navController.previousBackStackEntry
+                               ?.savedStateHandle
+                               ?.set(PLACE_BUNDLE, PlacesModel(
+                                   locationName = place.formattedAddress,
+                                   latitude = place.location.latitude,
+                                   longitude = place.location.longitude,
+                                   isPickupLocation = isPickupPlace
+                               ))
+                           navController.popBackStack()
+                       },
                        onClose = {
                            navController.popBackStack()
                        }
