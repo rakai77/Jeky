@@ -10,12 +10,12 @@ data class Location(
 )
 
 data class DisplayName(
-    val text: String,
-    val languageCode: String
+    val text: String?,
+    val languageCode: String?
 )
 
 data class PlacesItem(
-    val formattedAddress: String,
-    val displayName: DisplayName,
-    val location: Location
+    val formattedAddress: String?,
+    val displayName: DisplayName?,
+    val location: Location?
 )

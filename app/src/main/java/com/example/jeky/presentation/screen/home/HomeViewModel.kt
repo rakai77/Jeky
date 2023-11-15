@@ -7,11 +7,11 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.jeky.JekyApplication
 import com.example.jeky.core.data.source.Resource
+import com.example.jeky.core.data.source.remote.dto.request.LatLng
 import com.example.jeky.core.domain.usecase.PlacesUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class HomeViewModel constructor(private val placesUseCase: PlacesUseCase) : ViewModel() {
@@ -34,8 +34,8 @@ class HomeViewModel constructor(private val placesUseCase: PlacesUseCase) : View
         viewModelScope.launch {
             _uiState.emit(HomeUiState.Loading)
             placesUseCase.getPlaceRoutes(
-                "${origin.first},${origin.second}",
-                "${destination.first}, ${destination.second}"
+                origin = LatLng(origin.first, origin.second),
+                destination = LatLng(destination.first, destination.second)
             ).collect { result ->
                 when(result) {
                     is Resource.Success -> {

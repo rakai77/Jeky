@@ -1,7 +1,8 @@
 package com.example.jeky.core.data.interactor
 
+import RoutesResponse
 import com.example.jeky.core.data.source.Resource
-import com.example.jeky.core.data.source.remote.dto.response.GetPlacesRoutesResponse
+import com.example.jeky.core.data.source.remote.dto.request.LatLng
 import com.example.jeky.core.data.source.remote.dto.response.PlacesResponse
 import com.example.jeky.core.domain.repository.PlacesRepository
 import com.example.jeky.core.domain.usecase.PlacesUseCase
@@ -12,9 +13,7 @@ class PlacesInteractor constructor(private val placesRepository: PlacesRepositor
         return placesRepository.getPlaces(keyword)
     }
 
-    override suspend fun getPlaceRoutes(
-        origin: String, destination: String
-    ): Flow<Resource<GetPlacesRoutesResponse>> {
-        return placesRepository.getPlaceRoutes(origin, destination)
+    override suspend fun getPlaceRoutes(origin: LatLng, destination: LatLng): Flow<Resource<RoutesResponse>> {
+        return placesRepository.getPlacesRoute(origin, destination)
     }
 }

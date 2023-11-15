@@ -50,6 +50,8 @@ const val PLACE_BUNDLE = "place"
 @Composable
 fun PickLocationBottomSheet(
     viewModel: PickLocationViewModel,
+    originLocation: String,
+    destinationLocation: String,
     isToGetPickupLocation: Boolean,
     onPlaceClick: (PlacesItem, Boolean) -> Unit,
     onClose: () -> Unit
@@ -62,10 +64,10 @@ fun PickLocationBottomSheet(
     }
 
     var pickup by remember {
-        mutableStateOf("")
+        mutableStateOf(originLocation)
     }
     var destination by remember {
-        mutableStateOf("")
+        mutableStateOf(destinationLocation)
     }
 
     LaunchedEffect(Unit) {
@@ -213,9 +215,9 @@ fun PlaceItem(
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text(text = place.displayName.text, style = MaterialTheme.typography.labelMedium)
+            Text(text = place.displayName?.text.orEmpty(), style = MaterialTheme.typography.labelMedium)
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = place.formattedAddress, style = MaterialTheme.typography.bodySmall)
+            Text(text = place.formattedAddress.orEmpty(), style = MaterialTheme.typography.bodySmall)
         }
     }
 }

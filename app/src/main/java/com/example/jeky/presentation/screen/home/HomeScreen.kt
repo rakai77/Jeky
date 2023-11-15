@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -34,7 +33,7 @@ import com.example.jeky.presentation.screen.picklocation.PLACE_BUNDLE
 import com.example.jeky.presentation.theme.Primary
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.PolyUtil
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Polyline
@@ -44,12 +43,13 @@ import com.google.maps.android.compose.Polyline
 fun HomeScreen(
     saveStateHandle: SavedStateHandle?,
     viewModel: HomeViewModel,
-    onPickupClick: () -> Unit,
-    onDestinationClick: () -> Unit
+    onPickupClick: (String, String) -> Unit,
+    onDestinationClick: (String, String) -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
-    val placesResult by saveStateHandle?.getStateFlow(PLACE_BUNDLE, PlacesModel())!!.collectAsState()
+    val placesResult by saveStateHandle?.getStateFlow(PLACE_BUNDLE, PlacesModel())!!
+        .collectAsState()
     val locationPermissionState = rememberMultiplePermissionsState(
         listOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -62,10 +62,6 @@ fun HomeScreen(
     }
     var destination by remember {
         mutableStateOf(PlacesModel())
-    }
-
-    val tracks = remember {
-        mutableStateListOf<LatLng>()
     }
 
     LaunchedEffect(placesResult) {
@@ -85,37 +81,16 @@ fun HomeScreen(
         }
     }
 
-    LaunchedEffect(uiState) {
-        (uiState as? HomeUiState.Success)?.data?.routes?.forEach { routeItem ->
-            routeItem?.legs?.forEach { legsItem ->
-                legsItem?.steps?.forEach { stepsItem ->
-                    tracks.add(
-                        LatLng(
-                            stepsItem?.startLocation?.lat ?: 0.0,
-                            stepsItem?.startLocation?.lng ?: 0.0
-                        )
-                    )
-                    tracks.add(
-                        LatLng(
-                            stepsItem?.endLocation?.lat ?: 0.0,
-                            stepsItem?.endLocation?.lng ?: 0.0
-                        )
-                    )
-                }
-            }
-        }
-    }
-
-
-
     if (locationPermissionState.allPermissionsGranted) {
         Box(modifier = Modifier.fillMaxSize()) {
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
                 uiSettings = MapUiSettings(zoomControlsEnabled = false, compassEnabled = false)
             ) {
-                if (tracks.isNotEmpty()) {
-                    Polyline(points = tracks)
+                if (uiState is HomeUiState.Success) {
+                    val decodedPoints =
+                        PolyUtil.decode((uiState as HomeUiState.Success).data.routes?.firstOrNull()?.polyline?.encodedPolyline)
+                    Polyline(points = decodedPoints, color = MaterialTheme.colorScheme.primary)
                 }
             }
             PointField(modifier = Modifier
@@ -127,15 +102,28 @@ fun HomeScreen(
                 destinationValue = destination.locationName,
                 pickupPlaceholder = stringResource(id = R.string.pickup_location_txt),
                 destinationPlaceholder = stringResource(R.string.destination_location_txt),
-                onPickupFocused = onPickupClick,
-                onDestinationFocused = onDestinationClick,
+                onPickupFocused = {
+                    onPickupClick.invoke(
+                        pickup.locationName.ifEmpty { "-" },
+                        destination.locationName.ifEmpty { "-" },
+                    )
+                },
+                onDestinationFocused = {
+                    onDestinationClick.invoke(
+                        pickup.locationName.ifEmpty { "-" },
+                        destination.locationName.ifEmpty { "-" },
+                    )
+                },
                 onEditButtonClick = {}
             )
         }
     } else {
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 24.dp), verticalArrangement = Arrangement.Center) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 24.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
             Text(
                 text = stringResource(R.string.location_permission_message),
                 style = MaterialTheme.typography.bodySmall.copy(

@@ -7,7 +7,6 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.jeky.JekyApplication
 import com.example.jeky.core.data.source.Resource
-import com.example.jeky.core.domain.repository.AuthRepository
 import com.example.jeky.core.domain.usecase.AuthUseCase
 import com.example.jeky.core.domain.usecase.UserUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow

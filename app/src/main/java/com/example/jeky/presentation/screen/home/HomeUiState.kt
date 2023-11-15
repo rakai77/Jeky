@@ -1,10 +1,10 @@
 package com.example.jeky.presentation.screen.home
 
-import com.example.jeky.core.data.source.remote.dto.response.GetPlacesRoutesResponse
+import RoutesResponse
 
 sealed class HomeUiState {
 
-    class Success(val data: GetPlacesRoutesResponse): HomeUiState()
+    class Success(val data: RoutesResponse): HomeUiState()
 
     class Error(val message: String): HomeUiState()
 
