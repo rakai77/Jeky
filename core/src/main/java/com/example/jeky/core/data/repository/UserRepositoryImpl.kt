@@ -8,8 +8,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import javax.inject.Inject
 
-class UserRepositoryImpl constructor(private val dataStore: JekyDataStore) : UserRepository {
+class UserRepositoryImpl @Inject constructor(private val dataStore: JekyDataStore) : UserRepository {
     override suspend fun isUserLoggedIn(): Flow<Resource<Boolean>> {
         return flow<Resource<Boolean>> {
             dataStore.email.collect {

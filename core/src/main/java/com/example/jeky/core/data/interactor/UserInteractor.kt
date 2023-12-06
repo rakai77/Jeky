@@ -4,8 +4,9 @@ import com.example.jeky.core.data.source.Resource
 import com.example.jeky.core.domain.repository.UserRepository
 import com.example.jeky.core.domain.usecase.UserUseCase
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class UserInteractor constructor(
+class UserInteractor @Inject constructor(
     private val userRepository: UserRepository
 ) : UserUseCase {
     override suspend fun isUserLogged(): Flow<Resource<Boolean>> {

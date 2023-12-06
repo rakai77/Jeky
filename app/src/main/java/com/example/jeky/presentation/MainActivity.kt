@@ -13,6 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,26 +24,24 @@ import com.example.jeky.domain.model.PlacesModel
 import com.example.jeky.presentation.navigation.Route
 import com.example.jeky.presentation.screen.error.ErrorScreen
 import com.example.jeky.presentation.screen.home.HomeScreen
-import com.example.jeky.presentation.screen.home.HomeViewModel
 import com.example.jeky.presentation.screen.login.LoginScreen
-import com.example.jeky.presentation.screen.login.LoginViewModel
 import com.example.jeky.presentation.screen.picklocation.PLACE_BUNDLE
 import com.example.jeky.presentation.screen.picklocation.PickLocationBottomSheet
-import com.example.jeky.presentation.screen.picklocation.PickLocationViewModel
 import com.example.jeky.presentation.screen.register.RegisterScreen
-import com.example.jeky.presentation.screen.register.RegisterViewModel
 import com.example.jeky.presentation.theme.JekyTheme
 import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import java.net.URLDecoder
 import java.net.URLEncoder
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: MainViewModel by viewModels { MainViewModel.Factory }
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +58,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun JekyApp(viewModel: MainViewModel) {
+fun JekyApp(viewModel: MainViewModel = hiltViewModel()) {
     val sheetState = rememberModalBottomSheetState(
         ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true
@@ -78,9 +77,8 @@ fun JekyApp(viewModel: MainViewModel) {
                composable(
                    route = Route.Login.route
                ) {
-                   val viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel(factory = LoginViewModel.Factory)
                    LoginScreen(
-                       viewModel = viewModel,
+                       viewModel = hiltViewModel(),
                        onNavigateToHome = {
                            navController.navigate(Route.Home.route)
                        },
@@ -97,9 +95,8 @@ fun JekyApp(viewModel: MainViewModel) {
                composable(
                    route = Route.Register.route
                ) {
-                   val viewModel: RegisterViewModel = androidx.lifecycle.viewmodel.compose.viewModel(factory = RegisterViewModel.Factory)
                    RegisterScreen(
-                       viewModel = viewModel,
+                       viewModel = hiltViewModel(),
                        onNavigateBack = {
                            navController.popBackStack()
                        },
@@ -116,10 +113,9 @@ fun JekyApp(viewModel: MainViewModel) {
                composable(
                    route = Route.Home.route
                ) {
-                   val viewModel: HomeViewModel = androidx.lifecycle.viewmodel.compose.viewModel(factory = HomeViewModel.Factory)
                    val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
                    HomeScreen(
-                       viewModel = viewModel,
+                       viewModel = hiltViewModel(),
                        saveStateHandle = savedStateHandle,
                        onPickupClick = { origin, destination ->
                            navController.navigate(
@@ -145,11 +141,9 @@ fun JekyApp(viewModel: MainViewModel) {
                    val isToGetPickupLocation = backStackEntry.arguments?.getBoolean("isToGetPickupLocation") ?: true
                    val originLocation = backStackEntry.arguments?.getString("originLocation").orEmpty().decodeFromUrl()
                    val destinationLocation = backStackEntry.arguments?.getString("destinationLocation").orEmpty().decodeFromUrl()
-                   val viewModel: PickLocationViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
-                       factory = PickLocationViewModel.Factory
-                   )
+
                    PickLocationBottomSheet(
-                       viewModel,
+                       viewModel = hiltViewModel(),
                        if (originLocation == "-") "" else originLocation,
                        if (destinationLocation == "-") "" else destinationLocation,
                        isToGetPickupLocation,

@@ -13,8 +13,9 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import javax.inject.Inject
 
-class AuthRepositoryImpl constructor(private val userDao: UserDao) : AuthRepository {
+class AuthRepositoryImpl @Inject constructor(private val userDao: UserDao) : AuthRepository {
     override suspend fun login(email: String, password: String): Flow<Resource<User>> {
         return flow {
             val users = userDao.getUserByEmailAndPassword(email, password).first()
