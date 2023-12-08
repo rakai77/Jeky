@@ -43,6 +43,10 @@ retrofit = "2.9.0"
 retrofit-gson = "2.9.0"
 interceptor = "5.0.0-alpha.6"
 
+#Hilt
+dagger = "2.45"
+hilt-compose = "1.0.0"
+
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -105,6 +109,11 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx", version.ref = "firebase-analytics" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx", version.ref = "firebase-crashlytics" }
 
+# Dependency Injection
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger" }
+hilt-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-compose" }
+
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "org-jetbrains-kotlin-android" }
@@ -125,6 +134,10 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-gradle"}
 gms-googleServices = { id = "com.google.gms.google-services", version.ref = "gms-googleServices"}
 
+dagger-hilt-android = { id = "com.google.dagger.hilt.android" , version.ref = "dagger" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "org-jetbrains-kotlin-android" }
+
 [bundles]
 maps = ["play-services-maps", "play-service-location", "maps-compose", "maps-ktx", "maps-utils-ktx"]
 networking = ["retrofit", "retrofit-gson", "interceptor"]
+hilt-dagger = ["hilt-android","hilt-compose"]

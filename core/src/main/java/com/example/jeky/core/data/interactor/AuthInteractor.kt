@@ -5,8 +5,9 @@ import com.example.jeky.core.domain.model.User
 import com.example.jeky.core.domain.repository.AuthRepository
 import com.example.jeky.core.domain.usecase.AuthUseCase
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class AuthInteractor constructor(
+class AuthInteractor @Inject constructor(
     private val authRepository: AuthRepository
 ) : AuthUseCase {
     override suspend fun login(email: String, password: String): Flow<Resource<User>> {
