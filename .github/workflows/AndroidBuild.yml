@@ -22,7 +22,7 @@ jobs:
         run: ./gradlew build
 
       - name: Create local.properties
-        run: echo "sdk.dir=/Users/user/Library/Android/sdk" > local.properties
+        run: echo "/home/runner/work/Jeky/Jeky/local.properties" > local.properties
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.1.3
