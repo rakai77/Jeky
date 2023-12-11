@@ -16,13 +16,13 @@ jobs:
         uses: actions/setup-java@v4.0.0
         with:
           java-version: '17'
-          distribution: 'adopt'
+          distribution: 'oracle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
       - name: Build with Gradle
         run: ./gradlew build
-
-      - name: Create local.properties
-        run: echo "/home/runner/work/Jeky/Jeky/local.properties" > local.properties
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.1.3
